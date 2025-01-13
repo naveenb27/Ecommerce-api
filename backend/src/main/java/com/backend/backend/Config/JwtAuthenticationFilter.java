@@ -26,18 +26,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
-        System.out.println("value: " + jwtTokenProvider);
+        // System.out.println("value: " + jwtTokenProvider);
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = extractTokenFromRequest(request);
-        System.out.println("Extracted Token: " + token);
+        // System.out.println("Extracted Token: " + token);
 
         if (token != null && jwtTokenProvider.validateToken(token) != null) {
             Claims claims = jwtTokenProvider.validateToken(token);
-            System.out.println("Claims: " + claims);
+            // System.out.println("Claims: " + claims);
 
             String username = claims.getSubject();
             List<String> roles = (List<String>) claims.get("roles");
@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("auth_token".equals(cookie.getName())) { // Assuming your cookie name is JWT
+                if ("auth_token".equals(cookie.getName())) { 
                     // System.out.println("Token: "+ cookie.getValue());
                     return cookie.getValue();
                 }

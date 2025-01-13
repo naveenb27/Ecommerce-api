@@ -30,7 +30,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        // Extract attributes from OAuth2User
         String googleId = (String) oAuth2User.getAttribute("sub");
         String email = (String) oAuth2User.getAttribute("email");
         String name = (String) oAuth2User.getAttribute("name");
@@ -47,20 +46,16 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 return userRepository.save(newUser);
             });
 
-        // Generate JWT token for the user
         String jwt = jwtTokenProvider.generateToken(user);
 
-        // Create a cookie with the JWT token
         Cookie cookie = new Cookie("auth_token", jwt);
-        cookie.setHttpOnly(true); // Make sure the cookie is only accessible by the server
-        cookie.setSecure(request.isSecure()); // Set to true if using HTTPS
-        cookie.setPath("/"); // Make the cookie available across the entire application
-        cookie.setMaxAge(7 * 24 * 60 * 60); // Set cookie expiration (7 days)
+        cookie.setHttpOnly(true);
+        cookie.setSecure(request.isSecure()); 
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60);
 
-        // Add the cookie to the response
         response.addCookie(cookie);
 
-        // Optionally, log the cookie value for debugging purposes (remove in production)
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cook : cookies) {
@@ -70,7 +65,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             }
         }
 
-        // Redirect the user to the dashboard after successful login
         response.sendRedirect("http://localhost:5173/dashboard");
     }
 }

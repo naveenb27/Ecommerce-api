@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OAuthController {
     @GetMapping
     public String handleGoogleCallback(@RequestParam String code) {
-        // Log the code for debugging
         System.out.println("Authorization Code: " + code);
         return "Login Successful!";
     }

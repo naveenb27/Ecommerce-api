@@ -1,7 +1,14 @@
 package com.backend.backend.Model;
-import com.backend.backend.Model.Category;
-import jakarta.persistence.*;
-import java.util.*;
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "category")
@@ -19,6 +26,7 @@ public class Category{
     @Temporal(TemporalType.DATE)
     @Column(name = "category_datex")
     private Date createdDate;
+
 
     public void setCategoryName(String categoryName){
         this.categoryName = categoryName;

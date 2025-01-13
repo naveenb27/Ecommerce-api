@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const Products = () => {
+const ProductDisplay = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -11,11 +11,11 @@ const Products = () => {
   const [error, setError] = useState(null);
   const [pageCount, setPageCount] = useState(1);
   const [label, setLabel] = useState(new Set());
-  const [selectedLabels, setSelectedLabels] = useState(new Set());
   const [minPrice, setMinPrice] = useState(-1);
   const [maxPrice, setMaxPrice] = useState(-1);
   const [selectedPrice, setSelectedPrice] = useState([0, 0]);
   const [nav, setNav] = useState(true);
+  const [selectedLabels, setSelectedLabels] = useState([]);
 
   const handleNav = () => {
     setNav((prevNav) => !prevNav);
@@ -24,13 +24,41 @@ const Products = () => {
   const handleLabelChange = (e) => {
     const value = e.target.value;
     setSelectedLabels((prev) =>
-      prev.has(value) ? new Set([...prev].filter((item) => item !== value)) : new Set([...prev, value])
+      prev.has(value)
+        ? new Set([...prev].filter((item) => item !== value))
+        : new Set([...prev, value])
     );
   };
 
   const handlePriceChange = (e) => {
     const value = +e.target.value;
     setSelectedPrice([selectedPrice[0], value]);
+  };
+
+  const filterProduct = () => {
+    setLoading(true);
+    try {
+      const filteredProducts = allProducts.filter((product) => {
+        const discountedPrice = product.mrp * (1 - product.discount / 100);
+        if (discountedPrice < selectedPrice[0] || discountedPrice > selectedPrice[1]) {
+          return false;
+        }
+
+        if (selectedLabels.size > 0 && !selectedLabels.has(product.label)) {
+          return false;
+        }
+
+        return true;
+      });
+
+      setProducts(filteredProducts);
+      setPageCount(Math.ceil(filteredProducts.length / 4));
+    } catch (e) {
+      setError("Failed to apply filters. Please try again.");
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -81,34 +109,8 @@ const Products = () => {
     fetchProducts();
   }, [id, page]);
 
-  const filterProduct = () => {
-    setLoading(true);
-    try {
-      const filteredProducts = allProducts.filter((product) => {
-        const discountedPrice = product.mrp * (1 - product.discount / 100);
-        if (discountedPrice < selectedPrice[0] || discountedPrice > selectedPrice[1]) {
-          return false;
-        }
-
-        if (selectedLabels.size > 0 && !selectedLabels.has(product.label)) {
-          return false;
-        }
-
-        return true;
-      });
-
-      setProducts(filteredProducts);
-      setPageCount(Math.ceil(filteredProducts.length / 4));
-    } catch (e) {
-      setError("Failed to apply filters. Please try again.");
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getPaginationRange = () => {
-    const range = 5; 
+    const range = 5;
     let start = Math.max(1, page - Math.floor(range / 2));
     let end = Math.min(pageCount, start + range - 1);
 
@@ -130,7 +132,7 @@ const Products = () => {
   const { start, end } = getPaginationRange();
 
   return (
-    <div className="p-4">
+    <div>
       <h1 className="text-2xl font-semibold text-center mb-6 text-gray-800">
         {products[0]?.category?.categoryName || "Products"}
       </h1>
@@ -205,6 +207,7 @@ const Products = () => {
         </div>
       </div>
 
+      {/* Pagination */}
       <div className="flex justify-center mt-6">
         <button
           onClick={() => setPage(1)}
@@ -213,9 +216,7 @@ const Products = () => {
           First
         </button>
 
-        {start > 1 && (
-          <span className="px-2 text-gray-500">...</span>
-        )}
+        {start > 1 && <span className="px-2 text-gray-500">...</span>}
 
         {Array.from({ length: end - start + 1 }, (_, i) => (
           <button
@@ -229,9 +230,7 @@ const Products = () => {
           </button>
         ))}
 
-        {end < pageCount && (
-          <span className="px-2 text-gray-500">...</span>
-        )}
+        {end < pageCount && <span className="px-2 text-gray-500">...</span>}
 
         <button
           onClick={() => setPage(pageCount)}
@@ -244,4 +243,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default ProductDisplay;

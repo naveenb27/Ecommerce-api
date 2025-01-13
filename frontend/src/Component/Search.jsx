@@ -19,7 +19,7 @@ const Search = () => {
     return (
         <div className="flex justify-around items-center shadow-lg py-2 px-4 gap-4">
             <div className="text-[15px]">
-                Get up to 50% off today. Don't miss this opportunity!
+                Get up to 50% off today. Don`t miss this opportunity!
             </div>
             <div className="flex items-center gap-3 max-w-md">
                 <input

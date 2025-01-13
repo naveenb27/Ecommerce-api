@@ -1,43 +1,59 @@
 package com.backend.backend.Service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.backend.backend.Model.Category;
 import com.backend.backend.Repository.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-
 
 @Service
-public class CategoryService{
+@Transactional
+public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public Category saveCategory(Category category){
-        return categoryRepository.save(category);
+    public Category saveCategory(Category category) {
+        try {
+            return categoryRepository.save(category);
+        } catch (OptimisticLockingFailureException e) {
+            System.err.println("Conflict detected while saving category: " + e.getMessage());
+            throw e; 
+        }
     }
 
-    public List<Category> getAllCategories(){
+    public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
-    public Category getCategoryByID(Long id){
+    public Category getCategoryByID(Long id) {
         return categoryRepository.findById(id).orElse(null);
-    } 
-
-    public List<Category> getCategoryByPage(int page){
-        int offset = (page-1) * 2;
-        if (offset < 0) offset = 0; 
-        return categoryRepository.findCategoryByPage(2, offset);
     }
 
-    public void deleteCategory(Long id){
-        
-        try{
+    public List<Category> getCategoryByPage(int page) {
+        int pageSize = 3;
+        int offset = Math.max((page - 1) * pageSize, 0);
+        return categoryRepository.findCategoryByPage(pageSize, offset);
+    }
+
+    public void deleteCategory(Long id) {
+        try {
             categoryRepository.deleteById(id);
-        }catch(Exception err){
-            System.out.println("Wrong ID! " +  err);
+        } catch (Exception e) {
+            System.err.println("Error deleting category with ID " + id + ": " + e.getMessage());
+        }
+    }
+
+    public List<Category> saveAllCategories(List<Category> categories) {
+        try {
+            return categoryRepository.saveAll(categories);
+        } catch (OptimisticLockingFailureException e) {
+            System.err.println("Conflict detected while saving categories: " + e.getMessage());
+            throw e; 
         }
     }
 }
