@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const Products = () => {
   const { id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pageCount, setPageCount] = useState(1);
@@ -16,6 +16,8 @@ const Products = () => {
   const [maxPrice, setMaxPrice] = useState(-1);
   const [selectedPrice, setSelectedPrice] = useState([0, 0]);
   const [nav, setNav] = useState(true);
+
+  const page = parseInt(searchParams.get("page")) || 1;
 
   const handleNav = () => {
     setNav((prevNav) => !prevNav);
@@ -50,7 +52,7 @@ const Products = () => {
         const pagesCnt = Math.ceil(allProductsResponse.data.length / 6);
         setPageCount(pagesCnt);
         setProducts(response.data);
-        setAllProducts(allProductsResponse.data);  // Save all products for filtering
+        setAllProducts(allProductsResponse.data);
 
         const uniqueLabels = new Set();
         let min = Infinity;
@@ -108,7 +110,7 @@ const Products = () => {
   };
 
   const getPaginationRange = () => {
-    const range = 5; 
+    const range = 5;
     let start = Math.max(1, page - Math.floor(range / 2));
     let end = Math.min(pageCount, start + range - 1);
 
@@ -207,7 +209,7 @@ const Products = () => {
 
       <div className="flex justify-center mt-6">
         <button
-          onClick={() => setPage(1)}
+          onClick={() => setSearchParams({ page: 1 })}
           className="px-4 py-2 mx-1 border rounded bg-gray-200"
         >
           First
@@ -220,7 +222,7 @@ const Products = () => {
         {Array.from({ length: end - start + 1 }, (_, i) => (
           <button
             key={i}
-            onClick={() => setPage(start + i)}
+            onClick={() => setSearchParams({ page: start + i })}
             className={`px-4 py-2 mx-1 border rounded ${
               page === start + i ? "bg-blue-600 text-white" : "bg-gray-200"
             }`}
@@ -234,7 +236,7 @@ const Products = () => {
         )}
 
         <button
-          onClick={() => setPage(pageCount)}
+          onClick={() => setSearchParams({ page: pageCount })}
           className="px-4 py-2 mx-1 border rounded bg-gray-200"
         >
           Last

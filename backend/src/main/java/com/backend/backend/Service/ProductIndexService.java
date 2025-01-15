@@ -92,10 +92,16 @@ public class ProductIndexService{
             List<ProductIndex> name = searchByName(subString[i]);
             List<ProductIndex> category = searchByCategory(subString[i]);
             List<ProductIndex> description = searchByDescription(subString[i]);
+            List<ProductIndex> nameFuzz = productIndexRepo.findByNameFuzzy(subString[i]);
+            List<ProductIndex> categoryFuzz = productIndexRepo.findByCategoryFuzzy(subString[i]);
+            List<ProductIndex> descriptionFuzz = productIndexRepo.findByDescriptionContaining(subString[i]);
 
             uniqueResults.addAll(name);
             uniqueResults.addAll(category);
             uniqueResults.addAll(description);
+            uniqueResults.addAll(nameFuzz);
+            uniqueResults.addAll(categoryFuzz);
+            uniqueResults.addAll(descriptionFuzz);
         }
 
         List<ProductIndex> combinedResults = new ArrayList<>(uniqueResults);

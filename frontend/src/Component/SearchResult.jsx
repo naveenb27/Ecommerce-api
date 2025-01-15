@@ -54,6 +54,7 @@ const SearchResult = () => {
         setLabel(uniqueLabels);
       } catch (e) {
         // setError("Failed to fetch products. Please try again.");
+        setProducts([])
         console.log(e);
       }
     };
