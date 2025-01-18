@@ -8,9 +8,9 @@ services:
       MYSQL_ROOT_PASSWORD: 2cyHur5z
       MYSQL_DATABASE: ECOMMERCE
     ports:
-      - "3309:3306"  # Exposing MySQL on port 3309
+      - "3309:3306" 
     volumes:
-      - mysql_data:/var/lib/mysql  # Mounting the volume to persist data
+      - mysql_data:/var/lib/mysql  
     networks:
       - backend-network
 
@@ -27,7 +27,7 @@ services:
       - "8000:8080"  
     depends_on:
       - mysql
-      - elasticsearch  # Ensure Elasticsearch is up before the backend
+      - elasticsearch 
     networks:
       - backend-network
     restart: always
@@ -58,7 +58,7 @@ services:
     restart: always # Ensure Elasticsearch restarts on failure
 
 volumes:
-  mysql_data:  # Defined volume to persist MySQL data
+  mysql_data:
   es_data:
 
 networks:
