@@ -2,6 +2,7 @@ package com.backend.backend.Config;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -21,6 +22,13 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private final UserRepository userRepository; 
     private final JwtTokenProvider jwtTokenProvider; 
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+    private String getFrontendUrl(){
+        return frontendUrl;
+    }
+    
     public CustomOAuth2SuccessHandler(UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -28,6 +36,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+
+
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
         String googleId = (String) oAuth2User.getAttribute("sub");
@@ -35,7 +45,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String name = (String) oAuth2User.getAttribute("name");
         String picture = (String) oAuth2User.getAttribute("picture");
 
-    
         User user = userRepository.findByGoogleId(googleId)
             .orElseGet(() -> {
                 User newUser = new User();
@@ -52,10 +61,11 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         cookie.setHttpOnly(true);
         cookie.setSecure(request.isSecure()); 
         cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60);
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
 
         response.addCookie(cookie);
 
+        // Debugging: Print cookies (remove in production)
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cook : cookies) {
@@ -65,6 +75,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             }
         }
 
-        response.sendRedirect("http://localhost:5173/dashboard");
+        // Redirect to frontend dashboard
+        response.sendRedirect(getFrontendUrl() + "/dashboard");
     }
 }

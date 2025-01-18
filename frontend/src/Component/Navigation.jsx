@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 const Navigation = () => {
   const { userData, setUserData } = useAuth(); 
   const [displayInfo, setDisplayInfo] = useState(false);
+  const BACKENDURL = import.meta.env.VITE_BACKEND_URL;
+
 
   const displayInfoHandler = () => {
     setDisplayInfo((prev) => !prev);
@@ -22,7 +24,7 @@ const Navigation = () => {
 
   const logoutHandler = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/logout", {}, { withCredentials: true });
+      const response = await axios.post(`${BACKENDURL}/logout`, {}, { withCredentials: true });
       console.log("Logout successful:", response.data);
       // document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
       setUserData(null);
@@ -69,7 +71,7 @@ const Navigation = () => {
           </div>
         ) : (
           <div className="text-white font-medium cursor-pointer">
-            <a href="http://localhost:8080/oauth2/authorization/google">Login</a>
+            <a href="http://localhost:8000/oauth2/authorization/google">Login</a>
           </div>
         )}
       </div>

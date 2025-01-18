@@ -36,7 +36,9 @@ public class CategoryService {
 
     public List<Category> getCategoryByPage(int page) {
         int pageSize = 3;
+        // if(page <= 0) page = 1; 
         int offset = Math.max((page - 1) * pageSize, 0);
+
         return categoryRepository.findCategoryByPage(pageSize, offset);
     }
 

@@ -4,13 +4,19 @@ import { createContext, useContext, useEffect, useState } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  console.log(import.meta.env)
+
+  const BACKENDURL = import.meta.env.VITE_BACKEND_URL;
+
+  console.log(BACKENDURL);
+  
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/user-info", {
+        const response = await axios.get(`${BACKENDURL}/user-info`, {
           withCredentials: true,
         });
         if (response.status === 200) {

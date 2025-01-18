@@ -19,6 +19,9 @@ const Products = () => {
 
   const page = parseInt(searchParams.get("page")) || 1;
 
+  const BACKENDURL = import.meta.env.VITE_BACKEND_URL;
+
+
   const handleNav = () => {
     setNav((prevNav) => !prevNav);
   };
@@ -40,13 +43,13 @@ const Products = () => {
       setLoading(true);
       try {
         const endpoint = id
-          ? `http://localhost:8080/api/product/${id}/${page}`
-          : `http://localhost:8080/api/product/page?page=${page}`;
+          ? `${BACKENDURL}/api/product/${id}/${page}`
+          : `${BACKENDURL}/api/product/page?page=${page}`;
         const response = await axios.get(endpoint, { withCredentials: true });
 
         const allProductsEndpoint = id
-          ? `http://localhost:8080/api/product/${id}`
-          : `http://localhost:8080/api/product`;
+          ? `${BACKENDURL}/api/product/${id}`
+          : `${BACKENDURL}/api/product`;
         const allProductsResponse = await axios.get(allProductsEndpoint, { withCredentials: true });
 
         const pagesCnt = Math.ceil(allProductsResponse.data.length / 6);

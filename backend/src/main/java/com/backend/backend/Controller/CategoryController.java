@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.backend.Model.Category;
 import com.backend.backend.Service.CategoryService;
+;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/api/category")
 public class CategoryController {
 
@@ -27,11 +28,13 @@ public class CategoryController {
         return categoryService.getAllCategories();
     }
 
+    
     @GetMapping("/page")
     public List<Category> getCategoriesByPage(@RequestParam(defaultValue = "0") int page) {
-        System.out.println(page);
+        System.out.println("Page number requested: " + page);
         return categoryService.getCategoryByPage(page);
     }
+
 
     @PostMapping("/addAllCategories")
     public List<Category> addAllCategories(@RequestBody List<Category> categories) {

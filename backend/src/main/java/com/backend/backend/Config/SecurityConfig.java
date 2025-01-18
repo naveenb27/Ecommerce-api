@@ -16,10 +16,22 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.google.api.client.util.Value;
+
+import jakarta.annotation.PostConstruct;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
+    
+    private String getFrontendUrl(){
+        if(frontendUrl == null) return "http://localhost:8050";
+        return frontendUrl;
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
@@ -30,14 +42,27 @@ public class SecurityConfig {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+
+    
+    @PostConstruct
+    public void init() {
+        logger.info("Frontend URL: {}", getFrontendUrl());
+    }
+
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        if(frontendUrl == null){
+            frontendUrl = "http://localhost:5173";
+        }
+
+        System.out.println(frontendUrl);
+
         http.csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorizeRequest ->
                 authorizeRequest.anyRequest().authenticated())
             .oauth2Login(oauth2 -> oauth2
-                .defaultSuccessUrl("http://localhost:5173/dashboard", true)
+                .defaultSuccessUrl(getFrontendUrl()+"/dashboard", true)
                 .successHandler(customOAuth2SuccessHandler))
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // Corrected line
 
@@ -46,8 +71,9 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        logger.info("Frontend from cors: "+ frontendUrl);
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

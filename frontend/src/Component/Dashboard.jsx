@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const BACKENDURL = import.meta.env.VITE_BACKEND_URL;
   // const [categories, setCategories] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
@@ -12,7 +13,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const totalCategory = await axios.get(`http://localhost:8080/api/category`, {
+        const totalCategory = await axios.get(`${BACKENDURL}/api/category`, {
           withCredentials: true,
         });
 

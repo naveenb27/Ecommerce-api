@@ -20,8 +20,8 @@ import com.backend.backend.Service.ProductService;
 
 
 @RestController
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/api/product")
-@CrossOrigin(origins = "http://localhost:5173")
 class ProductController{
 
     @Autowired

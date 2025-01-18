@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 2cyHur5z
+      MYSQL_DATABASE: ECOMMERCE
+    ports:
+      - "3309:3306"  # Exposing MySQL on port 3309
+    volumes:
+      - mysql_data:/var/lib/mysql  # Mounting the volume to persist data
+    networks:
+      - backend-network
+
+  backend:
+    build: ./backend
+    image: backend
+    container_name: spring-boot-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/ECOMMERCE
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 2cyHur5z
+      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
+    ports:
+      - "8000:8080"  
+    depends_on:
+      - mysql
+      - elasticsearch  # Ensure Elasticsearch is up before the backend
+    networks:
+      - backend-network
+    restart: always
+    
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    image: react-app
+    ports:
+      - "5173:5173"  # Exposing React app on port 8050
+    networks:
+      - backend-network
+      
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9201:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data:rw
+    networks:
+      - backend-network
+    restart: always # Ensure Elasticsearch restarts on failure
+
+volumes:
+  mysql_data:  # Defined volume to persist MySQL data
+  es_data:
+
+networks:
+  backend-network:
+    driver: bridge

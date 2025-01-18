@@ -9,9 +9,17 @@ import Search from './Component/Search';
 import SearchResult from './Component/SearchResult';
 import Category from './Component/Category';
 
+const ProtectedPage = ({ children }) => (
+  <ProtectedRoute>
+    <Navigation />
+    <Search />
+    {children}
+  </ProtectedRoute>
+);
+
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_relativeSplatPath: true , v7_startTransition: true }}>
       <Routes>
         <Route 
           path='/' 
@@ -21,57 +29,47 @@ function App() {
         <Route 
           path='/dashboard' 
           element={
-            <ProtectedRoute>
-              <Navigation />
-              <Search />
+            <ProtectedPage>
               <Category />
               <Dashboard />
-            </ProtectedRoute>
+            </ProtectedPage>
           } 
         />
 
         <Route
           path='/category'
           element={
-            <ProtectedRoute>
-              <Navigation />
-              <Search />
+            <ProtectedPage>
               <Category />
               <Dashboard />
-            </ProtectedRoute>
+            </ProtectedPage>
           }
-          />
+        />
 
         <Route 
           path='/products/:id' 
           element={
-            <ProtectedRoute>
-              <Navigation />
-              <Search />
+            <ProtectedPage>
               <Products />
-            </ProtectedRoute>
+            </ProtectedPage>
           } 
         />
         
         <Route 
           path='/products' 
           element={
-            <ProtectedRoute>
-              <Navigation />
-              <Search />
+            <ProtectedPage>
               <Products />
-            </ProtectedRoute>
+            </ProtectedPage>
           } 
         />
 
         <Route 
           path='/search/:search' 
           element={
-            <ProtectedRoute>
-              <Navigation />
-              <Search />
+            <ProtectedPage>
               <SearchResult />
-            </ProtectedRoute>
+            </ProtectedPage>
           } 
         />
       </Routes>

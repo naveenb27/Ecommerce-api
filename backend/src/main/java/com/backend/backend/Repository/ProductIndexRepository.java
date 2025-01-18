@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.stereotype.Repository;
 
 import com.backend.backend.Model.ProductIndex;
 
+@Repository
 public interface ProductIndexRepository extends ElasticsearchRepository<ProductIndex, String> {
     List<ProductIndex> findByNameContaining(String name);
     List<ProductIndex> findByCategory(String category);

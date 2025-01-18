@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Category = () => {
+  const BACKENDURL = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,7 +23,7 @@ const Category = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/category/page`, {
+        const response = await axios.get(`${BACKENDURL}/api/category/page`, {
           params: { page, limit: 3 },
           withCredentials: true,
         });

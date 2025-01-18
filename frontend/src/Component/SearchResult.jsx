@@ -20,6 +20,9 @@ const SearchResult = () => {
     setNav((prevNav) => !prevNav);
   };
 
+  const BACKENDURL = import.meta.env.VITE_BACKEND_URL;
+
+
   const { search } = useParams();
   console.log(search);
 
@@ -28,7 +31,7 @@ const SearchResult = () => {
       // setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/elastic/products/search?search=${search}`,
+          `${BACKENDURL}/api/elastic/products/search?search=${search}`,
           { withCredentials: true }
         );
         setProducts(response.data);

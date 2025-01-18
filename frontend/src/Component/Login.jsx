@@ -4,6 +4,7 @@ import google from "../assets/Images/Google.png"
 import github from "../assets/Images/github.jpeg"
 
 const Login = () => {
+  const BACKENDURL = import.meta.env.VITE_BACKEND_URL;
     
 
     const {userData} = useAuth();
@@ -19,11 +20,11 @@ const Login = () => {
     }
     
     const googleLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/google"
+        window.location.href = `${BACKENDURL}/oauth2/authorization/google`
     }
 
     const githubLogin = () => {
-       window.location.href = "http://localhost:8080/oauth2/authorization/github"
+       window.location.href = `${BACKENDURL}/oauth2/authorization/github`
     }
 
     return (
